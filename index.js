@@ -14,5 +14,9 @@ bot.client.on('ready', () => {
     bot.keepAlive.start(bot);
     bot.databaseManager.connect();
 
-    bot.giveawayManager.checkFinished();
+    bot.client.guilds.cache.forEach(guild => {
+        setInterval(() => {
+            bot.updateLeaderboard(guild.id);
+        }, 60000); // Every minute
+    });
 });

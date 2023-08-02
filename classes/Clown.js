@@ -9,21 +9,19 @@ const EventManager = require('./EventManager.js');
 const CommandManager = require('./CommandManager.js');
 const KeepAlive = require('./KeepAlive.js');
 const DatabaseManager = require('./DatabaseManager.js');
-const GiveawayManager = require('./GiveawayManager');
 const EmbedHelper = require('./EmbedHelper');
 const CONSTANTS = require('../constants.json');
 
 class Clown {
     constructor() {
         // Initialize Discord client for bot
-        this.client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+        this.client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
 
         // Initialise main managers for bot
         this.eventManager = new EventManager(this);
         this.commandManager = new CommandManager(this);
         this.databaseManager = new DatabaseManager(process.env.MONGO_URI, this);
         this.keepAlive = new KeepAlive(this);
-        this.giveawayManager = new GiveawayManager(this);
         this.embedHelper = new EmbedHelper(this);
 
         this.CONSTANTS = CONSTANTS;
@@ -47,6 +45,27 @@ class Clown {
         }
 
         return url.protocol === "http:" || url.protocol === "https:";
+    }
+
+    async updateLeaderboard(guildId) {
+        const guildData = await this.databaseManager.getObject("guild", { guildId: guildId });
+
+        if (!guildData || !guildData.leaderboardMessageId || !guildData.leaderboardChannelId) {
+            console.log(`No leaderboard set up for guild ${guildId}`);
+            return;
+        }
+
+        const leaderboard = await this.databaseManager.getLeaderboardForGuild(guildId, "channelMessages");
+
+        let leaderboardText = 'Leaderboard:\n';
+        leaderboard.forEach((member, i) => {
+            leaderboardText += `${i + 1}. <@${member.userId}>: ${member.channelMessages[guildData.leaderboardChannelId]} messages\n`;
+        });
+
+        const leaderboardChannel = await this.client.channels.fetch(guildData.leaderboardChannelId);
+        const leaderboardMessage = await leaderboardChannel.messages.fetch(guildData.leaderboardMessageId);
+
+        leaderboardMessage.edit(leaderboardText);
     }
 }
 
