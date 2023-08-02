@@ -17,6 +17,6 @@ bot.client.on('ready', () => {
     bot.client.guilds.cache.forEach(guild => {
         setInterval(() => {
             bot.updateLeaderboard(guild.id);
-        }, 60000); // Every minute
+        }, bot.CONSTANTS.updateIntervalMilliseconds); // Every minute
     });
 });
