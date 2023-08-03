@@ -203,14 +203,19 @@ class DatabaseManager {
     }
 
     // returns filtered list of members in order of messages
-    async getLeaderboardForGuild(guildId, type) {
-        const allMembers = await Member.find(
-            { guildId: guildId }
-        ).sort({ [type]: -1 });
+    async getLeaderboardForGuild(guildId, channelId) {
+        const allMembers = await Member.find({ guildId: guildId });
+        
+        // Sort members based on the number of messages they have sent in the tracked channel
+        allMembers.sort((a, b) => {
+            const aMessages = a.channelMessages[channelId] || 0;
+            const bMessages = b.channelMessages[channelId] || 0;
+            return bMessages - aMessages;
+        });
     
         // Finally, we'll limit to the top 10
         const leaderboard = allMembers.slice(0, 10);
-    
+        
         return leaderboard;
     }
 }

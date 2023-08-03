@@ -55,7 +55,7 @@ class Clown {
             return;
         }
 
-        const leaderboard = await this.databaseManager.getLeaderboardForGuild(guildId, "channelMessages");
+        const leaderboard = await this.databaseManager.getLeaderboardForGuild(guildId, guildData.leaderboardTrackerChannelId);
 
         if (!leaderboard) {
             console.log(`Can't get leaderboard ${guildId}`);

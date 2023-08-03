@@ -4,7 +4,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('channel')
         .setDescription('Set the channel to display the leaderboard in.')
-        .addChannelOption(option => option.setName('channel').setDescription('The channel to get.').setRequired(true))
+        .addChannelOption(option => option.setName('channel').setDescription('The channel to track messages in.').setRequired(true))
         .setDMPermission(false)
         .setDefaultMemberPermissions(PermissionsBitField.ManageGuild),
 
@@ -18,7 +18,7 @@ module.exports = {
             return await interaction.reply({ embeds: [emb], ephemeral: true });
         }
 
-        let channel = interaction.options.getChannel('channel');
+        let channel = await interaction.options.getChannel('channel');
 
         await interaction.reply({ content: `Cool! I'm going to dump the leaderboard here to track messages in <#${channel.id}>.`, ephemeral: true });
         let message = await interaction.channel.send(`Leaderboard for <#${channel.id}> will go here.`);
