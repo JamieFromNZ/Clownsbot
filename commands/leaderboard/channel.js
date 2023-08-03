@@ -20,11 +20,11 @@ module.exports = {
 
         let channel = interaction.options.getChannel('channel');
 
-        await interaction.reply({ content: `Cool! I'm going to dump the leaderboard in <@${channel.id}>`, ephemeral: true });
-        let message = await channel.send("Leaderboard will go here");
+        await interaction.reply({ content: `Cool! I'm going to dump the leaderboard here to track messages in <#${channel.id}>.`, ephemeral: true });
+        let message = await interaction.channel.send(`Leaderboard for <#${channel.id}> will go here.`);
 
         // Update the guild object with the channel & message
-        await bot.databaseManager.updateObject("guild", { guildId: interaction.guild.id, update: { leaderboardMessageId: message.id, leaderboardChannelId: channel.id } });
+        await bot.databaseManager.updateObject("guild", { guildId: interaction.guild.id, update: { leaderboardMessageId: message.id, leaderboardChannelId: interaction.channel.id, leaderboardTrackerChannelId: channel.id } });
 
         await bot.updateLeaderboard(interaction.guild.id);
     }

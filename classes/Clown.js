@@ -57,9 +57,14 @@ class Clown {
 
         const leaderboard = await this.databaseManager.getLeaderboardForGuild(guildId, "channelMessages");
 
+        if (!leaderboard) {
+            console.log(`Can't get leaderboard ${guildId}`);
+            return;
+        }
+
         let leaderboardText = 'Leaderboard:\n';
         leaderboard.forEach((member, i) => {
-            leaderboardText += `${i + 1}. <@${member.userId}>: ${member.channelMessages[guildData.leaderboardChannelId]} messages\n`;
+            leaderboardText += `${i + 1}. <@${member.userId}>: ${member.channelMessages[guildData.leaderboardTrackerChannelId]} messages\n`;
         });
 
         const leaderboardChannel = await this.client.channels.fetch(guildData.leaderboardChannelId);

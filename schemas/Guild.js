@@ -13,6 +13,10 @@ const GuildSchema = new mongoose.Schema({
     leaderboardChannelId: {
         type: String,
         required: false,
+    },
+    leaderboardTrackerChannelId: {
+        type: String,
+        required: false,
     }
 });
 
